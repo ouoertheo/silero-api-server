@@ -3,7 +3,7 @@
 [Silero GitHub Page](https://github.com/snakers4/silero-models)
 
 ## Installation
-Recommended to use venv. You can run using the following commands. Change the script name if you are running from cmd or bash
+Recommended to use venv. You can install using the following commands. Change the script name if you are installing from cmd or bash
 ```
 py -m venv .\venv
 .\venv\scripts\Activate.ps1
