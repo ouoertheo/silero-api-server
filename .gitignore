@@ -1,0 +1,5 @@
+venv
+*.wav
+.vscode
+__*
+model.pt
