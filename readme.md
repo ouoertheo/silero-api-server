@@ -5,7 +5,7 @@
 ## Installation
 Recommended to use venv. You can run using the following commands. Change the script name if you are running from cmd or bash
 ```
-py venv .\venv
+py -m venv .\venv
 .\venv\scripts\Activate.ps1
 pip install -r requirements.txt
 ```
@@ -17,7 +17,8 @@ Ports will be updated in the `run` script. Port and hostname will be updated in 
 On first run of server, the model will need to be downloaded, this will happen automatically and may take a few minutes depending on your connection speed.
 
 ## Starting Server
-Execute the included `run.bat` or `run.sh`
+Enter the venv `.\venv\scripts\Activate.ps1`
+Execute the included `run.ps1` or `run.sh`
 You can access the API spec at `http://localhost:8001/docs`
 
 ## Voice Samples
