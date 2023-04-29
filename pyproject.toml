@@ -20,3 +20,6 @@ classifiers = [
 [project.urls]
 "Homepage" = "https://github.com/ouoertheo/silero-api-server"
 "Bug Tracker" = "https://github.com/ouoertheo/silero-api-server/issues"
+
+[tool.setuptools]
+packages = ["server", "tts"]
