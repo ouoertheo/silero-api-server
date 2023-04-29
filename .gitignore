@@ -1,5 +1,7 @@
 venv
 *.wav
 .vscode
-__*
+__pycache__
 model.pt
+dist
+*egg-info
