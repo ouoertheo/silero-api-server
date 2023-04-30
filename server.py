@@ -12,6 +12,11 @@ PORT = os.getenv('TTS_SERVER_PORT')
 LOCAL_URL = f"http://{HOSTNAME}:{PORT}"
 
 app = FastAPI()
+
+# Make sure the samples directory exists
+if not os.path.exists('samples'):
+    os.mkdir('samples')
+
 app.mount('/samples',StaticFiles(directory='samples'),name='samples')
 tts_service = SileroTtsService()
 origins = ["*"]
