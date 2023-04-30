@@ -6,20 +6,30 @@ import torchaudio
 from hashlib import md5
 from loguru import logger
 
-class TtsService:
+class SileroTtsService:
+    """
+    Generate TTS wav files using Silero
+    """
     def __init__(self) -> None:
         self.sample_text = "The fallowed fallen swindle auspacious goats in portable power stations."
 
+        # Silero works fine on CPU
         self.device = torch.device('cpu')
         torch.set_num_threads(4)
-
-        self.local_file = 'model.pt'
         torchaudio.set_audio_backend("soundfile")
+
+        # Make sure we  have the model
+        self.local_file = 'model.pt'
         if not os.path.isfile(self.local_file):
             logger.warning(f"First run, downloading Silero model. This could take some time...") 
             torch.hub.download_url_to_file('https://models.silero.ai/models/tts/en/v3_en.pt',
                                         self.local_file)  
             logger.info(f"Model download completed.") 
+
+
+        # Make sure we have the path
+        if not os.path.exists('samples'):
+            os.mkdir('samples')        
 
         self.model = torch.package.PackageImporter(self.local_file).load_pickle("tts_models", "model")
         self.model.to(self.device)
@@ -35,6 +45,7 @@ class TtsService:
         return self.model.speakers
 
     def generate_samples(self):
+        
         logger.warning("Removing current samples")
         for file in os.listdir('samples'):
             os.remove(f"samples/{file}")
