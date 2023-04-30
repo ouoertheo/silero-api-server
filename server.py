@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
-from tts import TtsService
+from tts import SileroTtsService
 dotenv.load_dotenv()
 HOSTNAME = os.getenv('TTS_SERVER_HOSTNAME')
 PORT = os.getenv('TTS_SERVER_PORT')
@@ -13,7 +13,7 @@ LOCAL_URL = f"http://{HOSTNAME}:{PORT}"
 
 app = FastAPI()
 app.mount('/samples',StaticFiles(directory='samples'),name='samples')
-tts_service = TtsService()
+tts_service = SileroTtsService()
 origins = ["*"]
 
 app.add_middleware(
