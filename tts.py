@@ -38,6 +38,7 @@ class SileroTtsService:
         logger.info(f"TTS Service loaded successfully") 
 
     def generate(self, speaker, text):
+        
         logger.info(f"Generating text {text} using speaker {speaker}") 
         return self.model.save_wav(text=text,speaker=speaker,sample_rate=self.sample_rate)
 
@@ -45,7 +46,7 @@ class SileroTtsService:
         return self.model.speakers
 
     def generate_samples(self):
-        
+
         logger.warning("Removing current samples")
         for file in os.listdir('samples'):
             os.remove(f"samples/{file}")
