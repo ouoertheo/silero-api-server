@@ -1,6 +1,6 @@
 [build-system]
-requires = ["setuptools>=61.0"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
 name = "silero-api-server"
@@ -20,6 +20,3 @@ classifiers = [
 [project.urls]
 "Homepage" = "https://github.com/ouoertheo/silero-api-server"
 "Bug Tracker" = "https://github.com/ouoertheo/silero-api-server/issues"
-
-[tool.setuptools.packages]
-find = {}
