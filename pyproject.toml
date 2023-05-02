@@ -21,5 +21,5 @@ classifiers = [
 "Homepage" = "https://github.com/ouoertheo/silero-api-server"
 "Bug Tracker" = "https://github.com/ouoertheo/silero-api-server/issues"
 
-[tool.setuptools]
-packages = ["server", "tts"]
+[tool.setuptools.packages]
+find = {}

@@ -5,3 +5,4 @@ __pycache__
 model.pt
 dist
 *egg-info
+build
