@@ -13,7 +13,7 @@ dotenv.load_dotenv()
 HOSTNAME = os.getenv('TTS_SERVER_HOSTNAME')
 PORT = os.getenv('TTS_SERVER_PORT')
 LOCAL_URL = f"http://{HOSTNAME}:{PORT}"
-SAMPLE_PATH = 'samples'
+SAMPLE_PATH = os.path.join(os.path.dirname(__file__),'sample')
 
 tts_service = SileroTtsService(os.path.abspath(SAMPLE_PATH))
 app = FastAPI()
