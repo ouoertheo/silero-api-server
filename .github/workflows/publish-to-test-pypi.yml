@@ -3,8 +3,8 @@ on:
   pull_request:
   push:
     branches: 
-      - master
-      - testbuild2
+    - master
+    - testbuild2
 jobs:
   build-n-publish:
     name: Build and publish Python 🐍 distributions 📦 to PyPI and TestPyPI
