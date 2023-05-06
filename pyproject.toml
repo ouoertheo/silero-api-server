@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "silero-api-server"
-version = "0.0.2"
+version = "0.0.4"
 authors = [
   { name="Ouoertheo", email="ouoertheo@tomeofjamin.net" },
 ]
@@ -16,7 +16,22 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
+dependencies = [
+  "fastapi==0.95.1",
+  "loguru==0.7.0",
+  "pydantic==1.10.7",
+  "python-dotenv==1.0.0",
+  "torch==2.0.0",
+  "torchaudio==2.0.1",
+  "uvicorn",
+  "soundfile",
+  "numpy"
+]
 
 [project.urls]
 "Homepage" = "https://github.com/ouoertheo/silero-api-server"
 "Bug Tracker" = "https://github.com/ouoertheo/silero-api-server/issues"
+
+
+[tool.hatch.build.targets.wheel]
+only-include = ["silero_api_server"]

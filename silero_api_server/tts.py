@@ -10,9 +10,9 @@ class SileroTtsService:
     """
     Generate TTS wav files using Silero
     """
-    def __init__(self) -> None:
+    def __init__(self, sample_path) -> None:
         self.sample_text = "The fallowed fallen swindle auspacious goats in portable power stations."
-
+        self.sample_path = sample_path
         # Silero works fine on CPU
         self.device = torch.device('cpu')
         torch.set_num_threads(4)
@@ -38,18 +38,17 @@ class SileroTtsService:
         logger.info(f"TTS Service loaded successfully") 
 
     def generate(self, speaker, text):
-        
         logger.info(f"Generating text {text} using speaker {speaker}") 
-        return self.model.save_wav(text=text,speaker=speaker,sample_rate=self.sample_rate)
+        audio = self.model.save_wav(text=text,speaker=speaker,sample_rate=self.sample_rate)
+        return audio
 
     def get_speakers(self):
         return self.model.speakers
 
     def generate_samples(self):
-
         logger.warning("Removing current samples")
-        for file in os.listdir('samples'):
-            os.remove(f"samples/{file}")
+        for file in os.listdir(self.sample_path):
+            os.remove(f"{self.sample_path}/{file}")
 
         logger.info("Creating new samples. This should take a minute...")
         for speaker in self.model.speakers:
@@ -57,10 +56,11 @@ class SileroTtsService:
             if os.path.exists(name):
                 continue
             audio = self.model.save_wav(text=self.sample_text,speaker=speaker,sample_rate=self.sample_rate)
-            os.rename(audio, f"samples/{name}")
+            os.rename(audio, f"{self.sample_path}/{name}")
         logger.info("New samples created")  
 
     def update_sample_text(self,text: str):
+        if not text: return
         self.sample_text = text
         logger.info(f"Sample text updated to {self.sample_text}")  
 
