@@ -1,7 +1,9 @@
 name: Publish Python 🐍 distributions 📦 to PyPI and TestPyPI
 on:
   push:
-    branches: testbuild2
+    branches: 
+      - master
+      - testbuild2
 jobs:
   build-n-publish:
     name: Build and publish Python 🐍 distributions 📦 to PyPI and TestPyPI
