@@ -5,7 +5,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
-from tts import SileroTtsService
+from silero_api_server.tts import SileroTtsService
+from loguru import logger
 dotenv.load_dotenv()
 HOSTNAME = os.getenv('TTS_SERVER_HOSTNAME')
 PORT = os.getenv('TTS_SERVER_PORT')
@@ -53,7 +54,8 @@ def generate(voice: Voice):
         audio = tts_service.generate(voice.speaker, voice.text)
         return FileResponse(audio)
     except Exception as e:
-        return HTTPException(500,voice)
+        logger.error(e)
+        return HTTPException(500,voice.speaker)
     
 @app.get("/tts/sample")
 def play_sample(speaker: str):

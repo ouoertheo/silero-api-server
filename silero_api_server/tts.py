@@ -38,9 +38,9 @@ class SileroTtsService:
         logger.info(f"TTS Service loaded successfully") 
 
     def generate(self, speaker, text):
-        
         logger.info(f"Generating text {text} using speaker {speaker}") 
-        return self.model.save_wav(text=text,speaker=speaker,sample_rate=self.sample_rate)
+        audio = self.model.save_wav(text=text,speaker=speaker,sample_rate=self.sample_rate)
+        return audio
 
     def get_speakers(self):
         return self.model.speakers
