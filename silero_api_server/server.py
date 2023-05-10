@@ -5,17 +5,21 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
+import uvicorn
 from silero_api_server.tts import SileroTtsService
 from loguru import logger
 from typing import Optional
+
 
 dotenv.load_dotenv()
 HOSTNAME = os.getenv('TTS_SERVER_HOSTNAME')
 PORT = os.getenv('TTS_SERVER_PORT')
 LOCAL_URL = f"http://{HOSTNAME}:{PORT}"
-SAMPLE_PATH = 'samples'
 
-tts_service = SileroTtsService(os.path.abspath(SAMPLE_PATH))
+os.chdir(os.getcwd())
+SAMPLE_PATH = "samples"
+
+tts_service = SileroTtsService(os.path.abspath(os.getcwd()))
 app = FastAPI()
 
 # Make sure the samples directory exists
@@ -26,7 +30,7 @@ if len(os.listdir(SAMPLE_PATH)) == 0:
     logger.info("Samples empty, generating new samples.")
     tts_service.generate_samples()
 
-app.mount(f"/{SAMPLE_PATH}",StaticFiles(directory='samples'),name='samples')
+app.mount(f"/samples",StaticFiles(directory=SAMPLE_PATH),name='samples')
 origins = ["*"]
 
 app.add_middleware(
@@ -75,3 +79,6 @@ def generate_samples(sample_text: Optional[str] = ""):
     tts_service.update_sample_text(sample_text)
     tts_service.generate_samples()
     return Response("Generated samples",status_code=200)
+
+if __name__ == "__main__":
+    uvicorn.run(app,host="0.0.0.0",port=8001)
