@@ -1,4 +1,5 @@
 
+import pathlib
 import dotenv, os
 from fastapi import FastAPI, Response, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -16,10 +17,11 @@ HOSTNAME = os.getenv('TTS_SERVER_HOSTNAME')
 PORT = os.getenv('TTS_SERVER_PORT')
 LOCAL_URL = f"http://{HOSTNAME}:{PORT}"
 
-os.chdir(os.getcwd())
+module_path = pathlib.Path(__file__).resolve().parent
+os.chdir(module_path)
 SAMPLE_PATH = "samples"
 
-tts_service = SileroTtsService(os.path.abspath(os.getcwd()))
+tts_service = SileroTtsService(f"{module_path}//{SAMPLE_PATH}")
 app = FastAPI()
 
 # Make sure the samples directory exists
