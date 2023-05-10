@@ -1,10 +1,9 @@
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling","hatch-vcs]
 build-backend = "hatchling.build"
 
 [project]
 name = "silero-api-server"
-version = "0.1.1"
 authors = [
   { name="Ouoertheo", email="ouoertheo@tomeofjamin.net" },
 ]
@@ -32,6 +31,8 @@ dependencies = [
 "Homepage" = "https://github.com/ouoertheo/silero-api-server"
 "Bug Tracker" = "https://github.com/ouoertheo/silero-api-server/issues"
 
+[tool.hatch.version]
+source = "vcs"
 
 [tool.hatch.build.targets.wheel]
 only-include = ["silero_api_server"]
