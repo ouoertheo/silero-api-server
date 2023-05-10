@@ -1,6 +1,6 @@
 
 import dotenv, os
-from fastapi import FastAPI, Response, HTTPException
+from fastapi import FastAPI, Response, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -30,7 +30,7 @@ if len(os.listdir(SAMPLE_PATH)) == 0:
     logger.info("Samples empty, generating new samples.")
     tts_service.generate_samples()
 
-app.mount(f"/samples",StaticFiles(directory=SAMPLE_PATH),name='samples')
+app.mount(f"/samples",StaticFiles(directory=f"{module_path}//{SAMPLE_PATH}"),name='samples')
 origins = ["*"]
 
 app.add_middleware(
@@ -49,12 +49,12 @@ class SampleText(BaseModel):
     text: str | None
 
 @app.get("/tts/speakers")
-def speakers():
+def speakers(request: Request):
     voices = [
         {
             "name":speaker,
             "voice_id":speaker,
-            "preview_url": f"{LOCAL_URL}/{SAMPLE_PATH}/{speaker}.wav"
+            "preview_url": f"{str(request.base_url)}{SAMPLE_PATH}/{speaker}.wav"
         } for speaker in tts_service.get_speakers()
     ]
     return voices

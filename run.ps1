@@ -1,1 +1,1 @@
-uvicorn "silero_api_server.server:app" --host 0.0.0.0 --port 8001
+py -m silero_api_server -o 0.0.0.0 -p 8001
