@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "silero-api-server"
-version = "0.0.5"
+version = "0.0.7"
 authors = [
   { name="Ouoertheo", email="ouoertheo@tomeofjamin.net" },
 ]
