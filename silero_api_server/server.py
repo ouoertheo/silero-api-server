@@ -11,13 +11,12 @@ from silero_api_server.tts import SileroTtsService
 from loguru import logger
 from typing import Optional
 
-
-
 module_path = pathlib.Path(__file__).resolve().parent
 os.chdir(module_path)
 SAMPLE_PATH = "samples"
+SESSION_PATH = "sessions"
 
-tts_service = SileroTtsService(f"{module_path}//{SAMPLE_PATH}")
+tts_service = SileroTtsService(f"{module_path}//{SAMPLE_PATH}", SESSION_PATH)
 app = FastAPI()
 
 # Make sure the samples directory exists
@@ -42,6 +41,7 @@ app.add_middleware(
 class Voice(BaseModel):
     speaker: str
     text: str
+    session: Optional[str]
 
 class SampleText(BaseModel):
     text: str | None
@@ -62,7 +62,10 @@ def generate(voice: Voice):
     # Clean elipses
     voice.text = voice.text.replace("*","")
     try:
-        audio = tts_service.generate(voice.speaker, voice.text)
+        if voice.session:
+            audio = tts_service.generate(voice.speaker, voice.text, voice.session)
+        else:
+            audio = tts_service.generate(voice.speaker, voice.text)
         return FileResponse(audio)
     except Exception as e:
         logger.error(e)

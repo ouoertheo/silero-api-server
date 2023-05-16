@@ -6,3 +6,4 @@ model.pt
 dist
 *egg-info
 build
+sessions
