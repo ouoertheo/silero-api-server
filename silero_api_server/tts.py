@@ -30,6 +30,9 @@ class SileroTtsService:
         # Make sure we have the path
         if not os.path.exists('samples'):
             os.mkdir('samples')        
+        
+        if not os.path.exists('sessions'):
+            os.mkdir('sessions')
 
         self.model = torch.package.PackageImporter(self.local_file).load_pickle("tts_models", "model")
         self.model.to(self.device)
@@ -37,7 +40,8 @@ class SileroTtsService:
         self.sample_rate = 48000 
         logger.info(f"TTS Service loaded successfully") 
 
-    def generate(self, speaker, text):
+    def generate(self, speaker, text, session=""):
+        if session
         logger.info(f"Generating text {text} using speaker {speaker}") 
         audio = self.model.save_wav(text=text,speaker=speaker,sample_rate=self.sample_rate)
         return audio
@@ -51,7 +55,7 @@ class SileroTtsService:
             os.remove(f"{self.sample_path}/{file}")
 
         logger.info("Creating new samples. This should take a minute...")
-        for speaker in self.model.speakers:
+        for speaker in self.model.speakers: 
             name = f"{speaker}.wav"
             if os.path.exists(name):
                 continue
