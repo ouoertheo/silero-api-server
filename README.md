@@ -21,7 +21,7 @@ options:
 
 On first run of server, two operations occur automatically. These may take a minute or two.
 1. The model will be downloaded 
-2. Voice samples will be generated generated. 
+2. Voice samples will be generated. 
 
 # API Docs
 API Docs can be accessed from [http://localhost:8001/docs](http://localhost:8001/docs)
