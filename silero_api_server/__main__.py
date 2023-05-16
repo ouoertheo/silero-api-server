@@ -11,4 +11,5 @@ parser.add_argument('-p','--port', action='store', dest='port', type=int, defaul
 
 args = parser.parse_args()
 
-uvicorn.run(app, host=args.host, port=args.port)
+if not args.help:
+    uvicorn.run(app, host=args.host, port=args.port)
