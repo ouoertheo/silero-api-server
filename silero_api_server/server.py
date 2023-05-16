@@ -1,6 +1,6 @@
 
 import pathlib
-import dotenv, os
+import os
 from fastapi import FastAPI, Response, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
@@ -12,10 +12,6 @@ from loguru import logger
 from typing import Optional
 
 
-dotenv.load_dotenv()
-HOSTNAME = os.getenv('TTS_SERVER_HOSTNAME')
-PORT = os.getenv('TTS_SERVER_PORT')
-LOCAL_URL = f"http://{HOSTNAME}:{PORT}"
 
 module_path = pathlib.Path(__file__).resolve().parent
 os.chdir(module_path)
