@@ -8,8 +8,9 @@ parser = argparse.ArgumentParser(
                     description='Run Silero within a FastAPI application')
 parser.add_argument('-o','--host', action='store', dest='host', default='0.0.0.0')
 parser.add_argument('-p','--port', action='store', dest='port', type=int, default=8001)
+parser.add_argument('-s','--session_path', action='store', dest='session_path', type=str, default="sessions")
 
 args = parser.parse_args()
 
-if not args.help:
+if help not in args:
     uvicorn.run(app, host=args.host, port=args.port)
