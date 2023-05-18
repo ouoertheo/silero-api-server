@@ -44,7 +44,7 @@ class Voice(BaseModel):
     session: Optional[str]
 
 class SampleText(BaseModel):
-    text: str | None
+    text: Optional[str]
 
 @app.get("/tts/speakers")
 def speakers(request: Request):
