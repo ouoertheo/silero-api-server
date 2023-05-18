@@ -3,7 +3,7 @@ Credit goes to the developers of Silero TTS
 [Silero PyTorch Page](https://pytorch.org/hub/snakers4_silero-models_tts/)  
 [Silero GitHub Page](https://github.com/snakers4/silero-models)
 
-This is primarily to serve the TTS extension in (SillyTavern)[https://github.com/Cohee1207/SillyTavern]. The TTS module or server can be used any way you wish.
+This is primarily to serve the TTS extension in [SillyTavern](https://github.com/Cohee1207/SillyTavern). The TTS module or server can be used any way you wish.
 
 ## Installation
 `pip install silero-api-server`
