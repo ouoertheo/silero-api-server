@@ -24,7 +24,7 @@ dependencies = [
   "torchaudio==2.0.1",
   "uvicorn",
   "soundfile",
-  "numpy"
+  "numpy",
   "pydub==0.25.1"
 ]
 dynamic=["version"]
