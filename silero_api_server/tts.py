@@ -49,7 +49,7 @@ class SileroTtsService:
         logger.info(f"Generating text {text} using speaker {speaker}") 
 
         # Character limit seems to be 1000. Split by sentences, clauses, or words, depending if any are longer than limit.
-        char_limit = 1000
+        char_limit = 600
         if len(text) > char_limit:
             logger.warning("Text too long. Splitting by sentences.")
             str_to_wav = ""
