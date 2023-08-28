@@ -16,16 +16,16 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-  "fastapi==0.95.1",
-  "loguru==0.7.0",
-  "pydantic==1.10.7",
-  "python-dotenv==1.0.0",
-  "torch==2.0.0",
-  "torchaudio==2.0.1",
+  "fastapi",
+  "loguru",
+  "pydantic",
+  "python-dotenv0",
+  "torch",
+  "torchaudio",
   "uvicorn",
   "soundfile",
   "numpy",
-  "pydub==0.25.1"
+  "pydub"
 ]
 dynamic=["version"]
 
