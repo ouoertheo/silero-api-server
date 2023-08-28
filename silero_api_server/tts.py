@@ -6,6 +6,7 @@ import torchaudio
 from hashlib import md5
 from loguru import logger
 from pydub import AudioSegment
+import requests
 
 class SileroTtsService:
     """
@@ -15,11 +16,21 @@ class SileroTtsService:
         self.sample_text = "The fallowed fallen swindle auspacious goats in portable power stations."
         self.sample_path = sample_path
         self.sessions_path = sessions_path
+
         # Silero works fine on CPU
         self.device = torch.device('cpu')
         torch.set_num_threads(4)
         torchaudio.set_audio_backend("soundfile")
 
+        # Make sure we have the samples path
+        if not os.path.exists('samples'):
+            os.mkdir('samples')        
+        
+        # Check for sessions path
+        if not os.path.exists(sessions_path):
+            os.mkdir(sessions_path)
+
+    def get_model(self, model):
         # Make sure we  have the model
         self.local_file = 'model.pt'
         if not os.path.isfile(self.local_file):
@@ -28,14 +39,7 @@ class SileroTtsService:
                                         self.local_file)  
             logger.info(f"Model download completed.") 
 
-
-        # Make sure we have the path
-        if not os.path.exists('samples'):
-            os.mkdir('samples')        
-        
-        if not os.path.exists(sessions_path):
-            os.mkdir(sessions_path)
-
+    def load_model(self, model):
         self.model = torch.package.PackageImporter(self.local_file).load_pickle("tts_models", "model")
         self.model.to(self.device)
 
@@ -133,3 +137,29 @@ class SileroTtsService:
         self.sample_text = text
         logger.info(f"Sample text updated to {self.sample_text}")  
 
+    def set_session_path(self, path: str):
+        if not os.path.exists(path):
+            os.mkdir(path)
+        self.sessions_path = path
+
+    def get_languages(self):
+        'Grab all v3 model links from https://models.silero.ai/models/tts'
+        lang_base_url = 'https://models.silero.ai/models/tts'
+        lang_urls = {}
+
+        # Parse initial directory for languages
+        response = requests.get(lang_base_url)
+        langs = [lang.split('/')[0] for lang in response.text.split('<a href="')][1:]
+
+        # Enter each directory and grab v3 model file links
+        for lang in langs:
+            response = requests.get(f"{lang_base_url}/{lang}")
+            if not response.ok:
+                raise f"Failed to get languages: {response.status_code}"
+            lang_files = [f.split('"')[0] for f in response.text.split('<a href="')][1:]
+
+            # If a valid v3 file, add to list
+            for lang_file in lang_files:
+                if lang_file.startswith('v3'):
+                    lang_urls[lang_file]={lang_file: f"{lang_base_url}/{lang}/{lang_file}"}
+        return lang_urls
