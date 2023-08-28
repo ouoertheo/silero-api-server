@@ -13,21 +13,20 @@ from typing import Optional
 
 module_path = pathlib.Path(__file__).resolve().parent
 os.chdir(module_path)
-SAMPLE_PATH = "samples"
-SESSION_PATH = "sessions"
+SAMPLE_PATH = pathlib.Path("samples")
 
-tts_service = SileroTtsService(f"{module_path}//{SAMPLE_PATH}", SESSION_PATH)
+tts_service = SileroTtsService(f"{module_path}//{SAMPLE_PATH}")
 app = FastAPI()
 
 # Make sure the samples directory exists
-if not os.path.exists(SAMPLE_PATH):
-    os.mkdir(SAMPLE_PATH)
+if not SAMPLE_PATH.exists():
+    SAMPLE_PATH.mkdir()
 
-if len(os.listdir(SAMPLE_PATH)) == 0:
+if len(list(SAMPLE_PATH.iterdir())) == 0:
     logger.info("Samples empty, generating new samples.")
     tts_service.generate_samples()
 
-app.mount(f"/samples",StaticFiles(directory=f"{module_path}//{SAMPLE_PATH}"),name='samples')
+app.mount(f"/samples",StaticFiles(directory=module_path.joinpath(SAMPLE_PATH)),name='samples')
 origins = ["*"]
 
 app.add_middleware(
@@ -45,6 +44,9 @@ class Voice(BaseModel):
 
 class SampleText(BaseModel):
     text: Optional[str]
+
+class SessionPayload(BaseModel):
+    path: Optional[str]
 
 @app.get("/tts/speakers")
 def speakers(request: Request):
@@ -69,7 +71,7 @@ def generate(voice: Voice):
         return FileResponse(audio)
     except Exception as e:
         logger.error(e)
-        return HTTPException(500,voice.speaker)
+        return HTTPException(500,f"{voice.speaker} generation failed: {e}")
     
 @app.get("/tts/sample")
 def play_sample(speaker: str):
@@ -80,6 +82,11 @@ def generate_samples(sample_text: Optional[str] = ""):
     tts_service.update_sample_text(sample_text)
     tts_service.generate_samples()
     return Response("Generated samples",status_code=200)
+
+@app.post("/tts/init_session")
+def init_session(sessionPayload: SessionPayload):
+    tts_service.init_sessions_path(sessionPayload.path)
+    return Response(f"Session path created at {sessionPayload.path}")
 
 if __name__ == "__main__":
     uvicorn.run(app,host="0.0.0.0",port=8001)
