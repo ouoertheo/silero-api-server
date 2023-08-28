@@ -1,5 +1,6 @@
 # V3
 import os, time
+import tempfile
 import torch
 import torch.package
 import torchaudio
@@ -26,7 +27,7 @@ class SileroTtsService:
             logger.warning(f"First run, downloading Silero model. This could take some time...") 
             torch.hub.download_url_to_file('https://models.silero.ai/models/tts/en/v3_en.pt',
                                         self.local_file)  
-            logger.info(f"Model download completed.") 
+            logger.info(f"Model download completed.")
 
 
         # Make sure we have the path
@@ -40,73 +41,61 @@ class SileroTtsService:
         self.model.to(self.device)
 
         self.sample_rate = 48000 
-        logger.info(f"TTS Service loaded successfully") 
+        logger.info(f"TTS Service loaded successfully")
 
-    def generate(self, speaker, text: str, session=""):
-        """
-        Generate a TTS wav file and return it. Optional session is provided to save related samples into a folder.
-        """
-        logger.info(f"Generating text {text} using speaker {speaker}") 
+        self.max_char_length = 600
 
-        # Character limit seems to be 1000. Split by sentences, clauses, or words, depending if any are longer than limit.
-        char_limit = 600
-        if len(text) > char_limit:
-            logger.warning("Text too long. Splitting by sentences.")
-            str_to_wav = ""
+    def generate(self, speaker, text, session=""):
+        if len(text) > self.max_char_length:
+            text_chunks = self.split_text(text)
+            audio_segments = []
             combined_wav = AudioSegment.empty()
-            for sentence in text.split('.'):
-                # Try to split by sentences
-                if len(str_to_wav) + len(sentence)  < char_limit:
-                    str_to_wav = ".".join([str_to_wav, sentence])
 
-                # Try to split further by commas, for ridiculously long sentences
-                elif len(sentence) > char_limit:
-                    logger.warning("Sentence too long. Splitting by clauses.")
-                    for clause in sentence.split(","):
-                        if len(str_to_wav) + len(clause) < char_limit:
-                            str_to_wav = ",".join([str_to_wav, clause])
-                        
-                        # Try to split by word? Seriously? How do you have a clause that's that long? Fuck.
-                        elif len(clause) > char_limit:
-                            logger.warning("Clause too long. Splitting by words.")
+            for chunk in text_chunks:
+                audio_path = self.model.save_wav(text=chunk,speaker=speaker,sample_rate=self.sample_rate)
+                combined_wav += AudioSegment.silent(500) # Insert 500ms pause
+                combined_wav += AudioSegment.from_file(audio_path)
 
-                            for word in clause.split():
-                                if len(str_to_wav) + len(word) < char_limit:
-                                    str_to_wav = " ".join([str_to_wav, word])
-                                elif len(word) > char_limit:
-                                    raise Exception("No. I'm not going to generate that. Piss off. You know why.")
-                                else:
-                                    logger.debug(f"Rendering audio for text with length {len(str_to_wav)}")
-                                    audio = self.model.save_wav(text=str_to_wav,speaker=speaker,sample_rate=self.sample_rate)
-                                    combined_wav += AudioSegment.silent(500) # Insert 500ms pause
-                                    combined_wav += AudioSegment.from_file(audio)
-                                    str_to_wav = word
-                        else:
-                            logger.debug(f"Rendering audio for text with length {len(str_to_wav)}")
-                            audio = self.model.save_wav(text=str_to_wav,speaker=speaker,sample_rate=self.sample_rate)
-                            combined_wav += AudioSegment.silent(500) # Insert 500ms pause
-                            combined_wav += AudioSegment.from_file(audio)
-                            str_to_wav = clause
-                else:
-                    logger.debug(f"Rendering audio for text with length {len(str_to_wav)}")
-                    audio = self.model.save_wav(text=str_to_wav,speaker=speaker,sample_rate=self.sample_rate)
-                    combined_wav += AudioSegment.silent(500) # Insert 500ms pause
-                    combined_wav += AudioSegment.from_file(audio)
-                    str_to_wav = sentence
             combined_wav.export("test.wav", format="wav")
-            audio = "test.wav"
-        else: 
-            audio = self.model.save_wav(text=text,speaker=speaker,sample_rate=self.sample_rate)
+            audio_path = "test.wav"
 
-        # Retain wav files grouped by a session
-        if session:
-            session_path = os.path.join(self.sessions_path,session)
-            if not os.path.exists(session_path):
-                os.mkdir(session_path)
-            dst = os.path.join(session_path,f"tts_{session}_{int(time.time())}_{speaker}_.wav")
-            os.rename(audio,dst)
-            audio = dst
-        return audio
+            if session:
+                audio_path = self.save_session_audio(audio_path, session, speaker)
+            
+            return audio_path
+        else:
+            return self.model.save_wav(text=chunk,speaker=speaker,sample_rate=self.sample_rate)
+
+    def split_text(self, text:str) -> list[str]:
+        # Split text into chunks less than self.max_char_length
+        chunk_list = []
+        chunk_str = ""
+
+        for word in text.split(' '):
+            word = word.replace('\n',' ') + " "
+            if len(chunk_str + word) > self.max_char_length:
+                chunk_list.append(chunk_str)
+                chunk_str = ""
+            chunk_str += word
+        
+        # Add the last chunk
+        if len(chunk_str) > 0:
+            chunk_list.append(chunk_str)
+
+        return chunk_list
+
+
+    def combine_audio(self, audio_segments):
+        combined_audio = AudioSegment.from_mono_audiosegments(audio_segments)
+        return combined_audio
+
+    def save_session_audio(self, audio, session, speaker):
+        session_path = os.path.join(self.sessions_path,session)
+        if not os.path.exists(session_path):
+            os.mkdir(session_path)
+        dst = os.path.join(session_path,f"tts_{session}_{int(time.time())}_{speaker}_.wav")
+        os.rename(audio,dst)
+        audio = dst
 
     def get_speakers(self):
         "List different speakers in model"
