@@ -19,7 +19,7 @@ dependencies = [
   "fastapi",
   "loguru",
   "pydantic",
-  "python-dotenv0",
+  "python-dotenv",
   "torch",
   "torchaudio",
   "uvicorn",
