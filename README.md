@@ -9,7 +9,7 @@ This is primarily to serve the TTS extension in [SillyTavern](https://github.com
 `pip install silero-api-server`
 
 ## Starting Server
-`py -m silero_api_server` will run on default ip and port (0.0.0.0:8001)
+`python -m silero_api_server` will run on default ip and port (0.0.0.0:8001)
 
 ```
 usage: silero_api_server [-h] [-o HOST] [-p PORT]
