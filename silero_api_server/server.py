@@ -3,7 +3,7 @@ import pathlib
 import os
 from fastapi import FastAPI, Response, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 import uvicorn
@@ -48,6 +48,8 @@ class SampleText(BaseModel):
 class SessionPayload(BaseModel):
     path: Optional[str]
 
+class Language(BaseModel):
+    id: str
 @app.get("/tts/speakers")
 def speakers(request: Request):
     voices = [
@@ -75,7 +77,7 @@ def generate(voice: Voice):
     
 @app.get("/tts/sample")
 def play_sample(speaker: str):
-    return FileResponse(f"{SAMPLE_PATH}/{speaker}.wav")
+    return FileResponse(f"{SAMPLE_PATH}/{speaker}.wav",status_code=200)
 
 @app.post("/tts/generate-samples")
 def generate_samples(sample_text: Optional[str] = ""):
@@ -83,10 +85,19 @@ def generate_samples(sample_text: Optional[str] = ""):
     tts_service.generate_samples()
     return Response("Generated samples",status_code=200)
 
-@app.post("/tts/init_session")
+@app.post("/tts/session")
 def init_session(sessionPayload: SessionPayload):
     tts_service.init_sessions_path(sessionPayload.path)
     return Response(f"Session path created at {sessionPayload.path}")
+
+@app.get("/tts/language")
+def get_languages():
+    return JSONResponse(list(tts_service.langs.keys()),status_code=200)
+
+@app.post("/tts/language")
+def set_language(language: Language):
+    tts_service.init_model(language.id)
+    return Response(status_code=200)
 
 if __name__ == "__main__":
     uvicorn.run(app,host="0.0.0.0",port=8001)
