@@ -96,7 +96,7 @@ def get_languages():
 
 @app.post("/tts/language")
 def set_language(language: Language):
-    tts_service.init_model(language.id)
+    tts_service.load_model(language.id)
     return Response(status_code=200)
 
 if __name__ == "__main__":
