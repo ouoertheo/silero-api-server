@@ -2,9 +2,10 @@ venv
 *.wav
 .vscode
 __pycache__
-model.pt
+*.pt
 dist
 *egg-info
 build
 sessions
 samples
+langs.json
