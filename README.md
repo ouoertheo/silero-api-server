@@ -33,5 +33,5 @@ API Docs can be accessed from [http://localhost:8001/docs](http://localhost:8001
 Samples are served statically by the web server at `/samples/{speaker}.wav` or callable from the API from `/tts/sample?speaker={speaker}` endpoint.
 
 # Selecting Language
-Download and set the desired language using `POST /tts/language` with payload `{"id":"languageId"}`
+Download and set the desired language using `POST /tts/language` with payload `{"id":"languageId"}`  
 List of language ids are available via `GET /tts/language`
