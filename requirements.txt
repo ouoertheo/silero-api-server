@@ -2,10 +2,11 @@ fastapi
 loguru
 pydantic
 python-dotenv
-torch
-torchaudio
+torch==1.13.1
+torchaudio==0.13.1
 uvicorn
 soundfile
-numpy
+numpy==1.24.3
 pydub
 requests
+torchvision==0.14.1
