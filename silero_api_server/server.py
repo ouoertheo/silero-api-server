@@ -50,6 +50,7 @@ class SessionPayload(BaseModel):
 
 class Language(BaseModel):
     id: str
+
 @app.get("/tts/speakers")
 def speakers(request: Request):
     voices = [
