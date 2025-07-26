@@ -25,7 +25,8 @@ dependencies = [
   "uvicorn",
   "soundfile",
   "numpy",
-  "pydub"
+  "pydub",
+  "requests",
 ]
 dynamic=["version"]
 

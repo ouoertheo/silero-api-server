@@ -28,6 +28,11 @@ On first run of server, two operations occur automatically. These may take a min
 1. The model will be downloaded 
 2. Voice samples will be generated. 
 
+## Deploying server as a container
+
+You can build an image from current source by running `docker build -t silero:latest .` in the top
+level of repository. Server can then be deployed as a container with `docker run -p 8001:8001 silero:latest`.
+
 # API Docs
 API Docs can be accessed from [http://localhost:8001/docs](http://localhost:8001/docs)
 
